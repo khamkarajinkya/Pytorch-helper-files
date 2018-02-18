@@ -33,4 +33,26 @@ def create_data_dictionary(base_path):
     data['Labels'] = flatten_list(class_index)
     
     return data
-    
+
+def create_train_test_dataset(data,split = 0.7):
+
+    labels = data['Labels'].tolist()
+    class_index = dict()
+    classes = list(set(labels))
+    for item in classes:
+        class_index[item] = [i for i,x in enumerate(labels) if x == item]
+
+    train = []
+    diff = list(range(len(labels)))
+
+    for item in classes:
+        c = len(class_index[item])
+        index = random.sample(class_index[item],int(c*split))
+        train.extend(index)
+
+    test = list(set(diff) - set(train))
+
+    trainset = data.iloc[train]
+    testset = data.iloc[test]
+        
+    return trainset,testset
